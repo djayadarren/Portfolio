@@ -16,18 +16,35 @@
     <h2>Projects</h2>
     <div class="project">
       <h3>Self-Balancing Robot</h3>
-      <p>PIDT-controlled robot built with Simulink and sensors. Includes object detection and BLE control.</p>
-    </div>
-  
-    <section id="video">
-  <h2>Demo Video</h2>
-  <iframe width="560" height="315" 
-    src="https://www.youtube.com/embed/1SRvt5VAaLs" 
-    title="YouTube video player" frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-    allowfullscreen>
-  </iframe>
-</section>
+      <p>
+        A project that brought together control theory, embedded systems, and (a lot of) fine-tuning.
+        This is our two-wheeled robot that balances itself in real time using a PID controller and IMU data. 
+        We tuned the control loop through hands-on testing to get it stable, responsive, and surprisingly agile. 
+        The robot also includes edge detection with a time-of-flight sensor, object detection using a compact camera, and Bluetooth connectivity for wireless control and feedback. 
+        </p>
+      <iframe width="560" height="315" 
+        src="https://www.youtube.com/embed/1SRvt5VAaLs" 
+        title="YouTube video player" frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+
+      <br>
+      <br>
+
+      <h3>Metal Detecting Robot</h3>
+      <p>
+        This is our remote-controlled robot that detects metal objects using a custom coil sensor. 
+        The robot communicates with a wireless controller over a master-slave connection, allowing for real-time feedback and control.
+        Debugging the communication between the controller and the robot was the most challenging part — the robot kept wandering off due to noisy signals until we refined the timing and input handling. 
+        Now it reliably scans for metal while responding smoothly to user commands along with a handful of other cool features.
+        </p>
+      <iframe width="560" height="315" 
+        src="https://www.youtube.com/embed/dmAkMjtUFdI" 
+        title="YouTube video player" frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
 
     </div>
     <!-- Add more projects here -->
