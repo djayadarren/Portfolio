@@ -4,87 +4,128 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Darren Djaya | Portfolio</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <meta name="description" content="Portfolio of Darren Djaya, focused on hardware design, RTL development, and reliable systems engineering." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Darren Djaya | Portfolio" />
+  <meta property="og:description" content="Embedded systems and hardware projects by Darren Djaya." />
+  <meta property="og:image" content="https://i.ytimg.com/vi/1SRvt5VAaLs/hqdefault.jpg" />
+  <meta property="og:url" content="https://yourusername.github.io/portfolio/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://yourusername.github.io/portfolio/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header>
-    <h1>Darren Djaya</h1>
-    <p>Electrical Engineering Student @ UBC</p>
-    <p>
-      <a href="https://www.linkedin.com/in/darren-djaya-45b892271/" target="_blank" rel="noopener">
-        <img class="linkedin-icon" src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn" style="width:24px; vertical-align:middle; margin-right:6px;">
-        Connect with me on LinkedIn
-      </a>
-    </p>
-  </header>
+<body data-theme="midnight">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="project">
-      <h3>Self-Balancing Robot</h3>
-      <p>
-        A project that brought together control theory, embedded systems, and (a lot of) fine-tuning.
-        This is a two-wheeled robot that balances itself in real time using a PID controller and IMU data. 
-        The control loop is tuned through hands-on testing to get it stable, responsive, and surprisingly agile. 
-        The robot also includes edge detection with a time-of-flight sensor, object detection using a compact camera, and Bluetooth connectivity for wireless control and feedback. 
-        </p>
-      <iframe width="560" height="315" 
-        src="https://www.youtube.com/embed/1SRvt5VAaLs" 
-        title="YouTube video player" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-      </iframe>
+  <div class="site-shell">
+    <header id="main-header" class="site-header">
+      <div class="header-left">
+        <a class="logo" href="#home" aria-label="Back to top">DD</a>
+        <nav class="main-nav" aria-label="Primary">
+          <a href="#work" data-nav-link>Work</a>
+          <a href="#about" data-nav-link>About</a>
+          <a href="#contact" data-nav-link>Contact</a>
+        </nav>
+      </div>
 
-      <br>
-      <br>
+      <div class="header-right">
+        <div class="info-block">
+          <p class="info-label">Mode</p>
+          <p id="mode-label" class="info-value">Midnight</p>
+        </div>
+        <div class="info-block">
+          <p class="info-label">Current Time</p>
+          <p id="current-time" class="info-value">--:--:--</p>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" type="button">Theme: Auto</button>
+      </div>
+    </header>
 
-      <h3>Snake Game</h3>
-      <p>
-        A simple snake game built in Python using Tkinter. It features a custom GUI with animated menus, real-time canvas rendering, and smooth input handling via after() callbacks. 
-        Players can select snake colors and difficulty before starting the game, which includes dynamic effects like wavy snake motion and pulsing food. 
-        The game is organized as a little object-oriented programming project, using class-based structure for clear separation of logic, UI, and animation timing.
-        </p>
-      <iframe width="560" height="315" 
-        src="https://www.youtube.com/embed/r8qWSH1rkhU " 
-        title="YouTube video player" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-      </iframe>
+    <main id="main-content">
+      <section id="home" class="section section--home" data-section-name="home">
+        <div class="home-grid">
+          <div class="home-main">
+            <h1 class="hero-name reveal">darren djaya</h1>
+            <p class="hero-text reveal">
+              works on projects that move people, move data, and move silicon from idea to timing-clean RTL.
+            </p>
+          </div>
 
-      <br>
-      <br>
+          <aside class="home-side reveal" aria-label="Summary">
+            <p>I love RTL because every line is a design decision you can prove.</p>
+            <p>Current focus: RISC-V pipelines, parallel compute, and practical FPGA/ASIC flows.</p>
+          </aside>
+        </div>
+      </section>
 
-      <h3>Metal Detecting Robot</h3>
-      <p>
-        This is a remote-controlled robot that detects metal objects using a custom coil sensor. 
-        The robot communicates with a wireless controller over a master-slave connection, allowing for real-time feedback and control.
-        Debugging the communication between the controller and the robot was the most challenging part — the robot kept wandering off due to noisy signals until we refined the timing and input handling. 
-        Now it reliably scans for metal while responding smoothly to user commands along with a handful of other cool features.
-        </p>
-      <iframe width="560" height="315" 
-        src="https://www.youtube.com/embed/dmAkMjtUFdI" 
-        title="YouTube video player" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-      </iframe>
+      <section id="about" class="section section--dark" data-section-name="about">
+        <div class="section-inner">
+          <h2 class="section-title reveal">About</h2>
+          <div class="about-layout">
+            <p class="about-lead reveal">
+              I like building systems that are technically clean and practically testable.
+            </p>
+            <p class="about-body reveal">
+              I am currently a Systems Design Engineer Intern at Hitachi Rail, where I contribute to transportation
+              systems across global projects including the SkyTrain in Vancouver, Kelana Jaya Line in Kuala Lumpur,
+              Kaynarca Pendik Line in Istanbul, and Tun Muen Line in Hong Kong. I have a strong interest in hardware
+              design, enjoy RTL programming, and love working on FPGA and ASIC projects.
+            </p>
+          </div>
+        </div>
+      </section>
 
+      <section id="work" class="section section--dark" data-section-name="work">
+        <div class="section-inner">
+          <h2 class="section-title reveal">Work</h2>
+          <div class="work-layout">
+            <p class="work-intro reveal">Projects I am currently prioritizing and building out.</p>
+            <div id="work-list" class="work-list" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section section--dark section--contact reveal" data-section-name="contact">
+        <div class="contact-inner">
+          <nav class="contact-links" aria-label="Contact links">
+            <a href="mailto:djayadarren@gmail.com">email</a>
+            <a href="https://www.linkedin.com/in/darren-djaya-45b892271/" target="_blank" rel="noopener noreferrer">linkedin</a>
+          </nav>
+
+          <h2 class="contact-word" aria-label="darren">darrendjaya</h2>
+
+          <p class="copyright">Copyright <span id="copyright-year">2026</span> Darren Djaya</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="video-modal" class="video-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+    <div class="video-modal__overlay" data-close-modal="true"></div>
+    <div class="video-modal__panel" role="document">
+      <button id="video-modal-close" type="button" class="video-modal__close" aria-label="Close video">Close</button>
+      <h3 id="video-modal-title" class="video-modal__title">Project Demo</h3>
+      <div class="video-modal__frame-wrap">
+        <iframe
+          id="video-modal-iframe"
+          src=""
+          title="Project video"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p class="video-modal__fallback">
+        Video blocked?
+        <a id="video-modal-link" href="#" target="_blank" rel="noopener noreferrer">Open link</a>
+      </p>
     </div>
-    
+  </div>
 
-  </section>
-
-  <section id="skills">
-    <h2>Skills</h2>
-    <ul>
-      <li>SystemVerilog, C, Python</li>
-      <li>FPGA (DE1-SoC), BLE, PID Control</li>
-      <li>LTspice, MATLAB/Simulink</li>
-    </ul>
-  </section>
-
-  <footer>
-    <p>Contact: djayadarren@gmail.com</p>
-  </footer>
+  <script src="script.js" defer></script>
 </body>
 </html>
