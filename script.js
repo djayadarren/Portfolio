@@ -40,7 +40,7 @@ const workItems = [
     summary:
       "Integrated a detection module with drive control logic and tuned traversal behavior to improve detection consistency and repeatability.",
     tech: ["Robotics", "Embedded Systems", "Sensor Integration", "Prototyping"],
-    links: { youtube: "https://www.youtube.com/@DarrenDjaya" },
+    links: { youtube: "https://youtu.be/dmAkMjtUFdI" },
     media: {}
   }
 ];
