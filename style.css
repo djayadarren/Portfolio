@@ -344,7 +344,7 @@ a {
 }
 
 .about-body {
-  color: color-mix(in oklab, var(--text-dark) 82%, #ffffff 18%);
+  color: color-mix(in oklab, #ffffff 76%, var(--text-dark) 24%);
   max-width: 66ch;
   margin-left: -2.1rem;
   font-size: 1.03rem;
@@ -369,7 +369,7 @@ a {
 
 .about-trail-text {
   display: inline-block;
-  color: color-mix(in oklab, var(--text-dark) 82%, #ffffff 18%);
+  color: color-mix(in oklab, #ffffff 76%, var(--text-dark) 24%);
   white-space: nowrap;
   opacity: 0;
   clip-path: inset(0 100% 0 0);
@@ -438,7 +438,7 @@ a {
 
 .company-train.is-running,
 .company-train.is-gone {
-  color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
+  color: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
   -webkit-text-stroke-color: transparent;
 }
 
@@ -843,6 +843,10 @@ button:focus-visible {
     padding: 0.45rem;
   }
 
+  .site-header {
+    padding: 0.85rem 0.9rem;
+  }
+
   .section--home,
   .section--dark {
     padding-inline: 0.85rem;
@@ -850,14 +854,25 @@ button:focus-visible {
 
   .main-nav a {
     font-size: 0.8rem;
+    padding: 0.32rem 0.62rem;
   }
 
-  .info-block {
-    width: 8.7rem;
+  .header-right {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    align-items: stretch;
+  }
+
+  .info-block,
+  .theme-toggle {
+    width: 100%;
+    min-width: 0;
   }
 
   .theme-toggle {
-    width: 8.3rem;
+    grid-column: 1 / -1;
   }
 
   .cursor-orb {
@@ -873,31 +888,42 @@ button:focus-visible {
     transform: none !important;
   }
 
-  .company-train::before {
-    display: none !important;
-  }
-
-  .company-train {
-    color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
-    -webkit-text-stroke-color: transparent;
+  .about-body {
+    font-size: 0.96rem;
   }
 
   .about-company-line {
     white-space: normal;
+    line-height: 1.44;
+  }
+
+  .company-train {
+    --company-hover-nudge: 0.24em;
+  }
+
+  .company-train::before {
+    width: 5.9em;
+    height: 1.2em;
+    left: -0.16em;
   }
 
   .about-trail {
+    gap: 0.26rem;
     margin-top: 0.34rem;
   }
 
+  .about-trail-line {
+    min-height: 1.36em;
+  }
+
   .about-trail-text {
-    opacity: 1 !important;
-    clip-path: inset(0 0 0 0) !important;
-    white-space: normal !important;
+    font-size: 0.94rem;
+    white-space: normal;
   }
 
   .about-trail-train {
-    display: none !important;
+    width: 5.9em;
+    height: 1.2em;
   }
 }
 
@@ -927,7 +953,7 @@ button:focus-visible {
   }
 
   .company-train {
-    color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
+    color: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
     -webkit-text-stroke-color: transparent;
   }
 
@@ -941,3 +967,4 @@ button:focus-visible {
     display: none !important;
   }
 }
+

@@ -455,6 +455,8 @@ function initCompanyTrainOneShot() {
   if (!companyTrain) {
     return;
   }
+  const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
   const markCompanyGone = () => {
     companyTrain.classList.remove("is-running");
@@ -473,10 +475,7 @@ function initCompanyTrainOneShot() {
     });
   };
 
-  if (
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-    window.matchMedia("(pointer: coarse)").matches
-  ) {
+  if (isReducedMotion) {
     markCompanyGone();
     revealAllTrailLines();
     return;
@@ -486,7 +485,8 @@ function initCompanyTrainOneShot() {
   let trailStarted = false;
   let handoffTimer = null;
 
-  const trailTrainSpeedPxPerMs = 0.48;
+  const trailTrainSpeedPxPerMs = isCoarsePointer ? 0.36 : 0.48;
+  const trainRevealDurationMs = isCoarsePointer ? 380 : 320;
 
   const animateTrailLine = (line, speedPxPerMs) =>
     new Promise((resolve) => {
@@ -509,7 +509,7 @@ function initCompanyTrainOneShot() {
       const startX = -trainWidth + startAnchorPx;
       const endX = lineWidth + trainWidth * 1.35;
       const travelDistance = Math.max(1, endX - startX);
-      const revealDurationMs = 320;
+      const revealDurationMs = trainRevealDurationMs;
       const totalDurationMs = travelDistance / Math.max(speedPxPerMs, 0.01);
       const startTime = performance.now();
 
