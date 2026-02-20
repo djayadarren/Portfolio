@@ -344,7 +344,7 @@ a {
 }
 
 .about-body {
-  color: var(--muted-dark);
+  color: color-mix(in oklab, var(--text-dark) 82%, #ffffff 18%);
   max-width: 66ch;
   margin-left: -2.1rem;
   font-size: 1.03rem;
@@ -369,7 +369,7 @@ a {
 
 .about-trail-text {
   display: inline-block;
-  color: var(--muted-dark);
+  color: color-mix(in oklab, var(--text-dark) 82%, #ffffff 18%);
   white-space: nowrap;
   opacity: 0;
   clip-path: inset(0 100% 0 0);
@@ -438,7 +438,7 @@ a {
 
 .company-train.is-running,
 .company-train.is-gone {
-  color: var(--text-dark);
+  color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
   -webkit-text-stroke-color: transparent;
 }
 
@@ -878,7 +878,7 @@ button:focus-visible {
   }
 
   .company-train {
-    color: var(--text-dark);
+    color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
     -webkit-text-stroke-color: transparent;
   }
 
@@ -927,7 +927,7 @@ button:focus-visible {
   }
 
   .company-train {
-    color: var(--text-dark);
+    color: color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
     -webkit-text-stroke-color: transparent;
   }
 

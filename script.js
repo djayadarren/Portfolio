@@ -574,7 +574,7 @@ function initCompanyTrainOneShot() {
     // feels snappier without changing its speed/acceleration profile.
     handoffTimer = window.setTimeout(() => {
       runTrailSequence();
-    }, 2450);
+    }, 1650);
   };
 
   companyTrain.addEventListener("click", (event) => {
