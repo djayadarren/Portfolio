@@ -73,6 +73,8 @@ let lastFocusedElement = null;
 let themePreference = localStorage.getItem("themePreference") || "auto";
 let chimeAudioContext = null;
 let nextChimeLowToHigh = true;
+let sectionIntent = "";
+let sectionIntentTimer = null;
 
 function themeForHour(hour) {
   if (hour >= 5 && hour < 11) {
@@ -227,11 +229,53 @@ function updateHeaderShadow() {
   header.classList.toggle("is-scrolled", window.scrollY > 10);
 }
 
+function setSectionIntent(targetId) {
+  if (sectionIntentTimer) {
+    window.clearTimeout(sectionIntentTimer);
+    sectionIntentTimer = null;
+  }
+
+  sectionIntent = targetId || "";
+
+  if (!sectionIntent) {
+    delete body.dataset.sectionIntent;
+    return;
+  }
+
+  body.dataset.sectionIntent = sectionIntent;
+  body.dataset.activeSection = sectionIntent;
+
+  sectionIntentTimer = window.setTimeout(() => {
+    sectionIntent = "";
+    delete body.dataset.sectionIntent;
+    sectionIntentTimer = null;
+  }, 1600);
+}
+
 function setActiveNav(sectionId) {
+  if (sectionIntent && sectionId === sectionIntent) {
+    setSectionIntent("");
+  }
+
+  body.dataset.activeSection = sectionIntent || sectionId || "";
   navLinks.forEach((link) => {
-    const isMatch = link.getAttribute("href") === `#${sectionId}`;
+    const isMatch = Boolean(sectionId) && link.getAttribute("href") === `#${sectionId}`;
     link.classList.toggle("is-active", isMatch);
     link.setAttribute("aria-current", isMatch ? "page" : "false");
+  });
+}
+
+function initNavIntentState() {
+  navLinks.forEach((link) => {
+    const applyIntent = () => {
+      const targetId = link.getAttribute("href")?.replace("#", "");
+      setSectionIntent(targetId || "");
+    };
+
+    link.addEventListener("pointerdown", applyIntent);
+    link.addEventListener("click", () => {
+      applyIntent();
+    });
   });
 }
 
@@ -240,17 +284,34 @@ function initNavObserver() {
     return;
   }
 
+  const visibilityBySection = new Map(
+    sections.map((section) => [section.id, 0])
+  );
+
+  const syncActiveNav = () => {
+    let bestId = "";
+    let bestRatio = 0;
+
+    visibilityBySection.forEach((ratio, id) => {
+      if (ratio > bestRatio) {
+        bestRatio = ratio;
+        bestId = id;
+      }
+    });
+
+    setActiveNav(bestId);
+  };
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveNav(entry.target.id);
-        }
+        visibilityBySection.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
       });
+      syncActiveNav();
     },
     {
-      threshold: 0.52,
-      rootMargin: "-25% 0px -45% 0px"
+      threshold: [0, 0.08, 0.16, 0.24, 0.32, 0.4],
+      rootMargin: "-20% 0px -38% 0px"
     }
   );
 
@@ -270,17 +331,18 @@ function initReveal() {
   }
 
   const observer = new IntersectionObserver(
-    (entries, io) => {
+    (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.16) {
           entry.target.classList.add("is-visible");
-          io.unobserve(entry.target);
+        } else {
+          entry.target.classList.remove("is-visible");
         }
       });
     },
     {
-      threshold: 0.16,
-      rootMargin: "0px 0px -10% 0px"
+      threshold: [0, 0.16],
+      rootMargin: "0px 0px -6% 0px"
     }
   );
 
@@ -387,6 +449,158 @@ function initThemeToggle() {
   }
 }
 
+function initCompanyTrainOneShot() {
+  const companyTrain = document.querySelector(".company-train");
+  const trailLines = Array.from(document.querySelectorAll("[data-about-line]"));
+  if (!companyTrain) {
+    return;
+  }
+
+  const markCompanyGone = () => {
+    companyTrain.classList.remove("is-running");
+    companyTrain.classList.add("is-gone");
+  };
+
+  const revealAllTrailLines = () => {
+    trailLines.forEach((line) => {
+      const text = line.querySelector(".about-trail-text");
+      line.classList.add("is-done");
+      line.classList.remove("is-revealing");
+      if (text) {
+        text.style.clipPath = "inset(0 0 0 0)";
+        text.style.opacity = "1";
+      }
+    });
+  };
+
+  if (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia("(pointer: coarse)").matches
+  ) {
+    markCompanyGone();
+    revealAllTrailLines();
+    return;
+  }
+
+  let hasStarted = false;
+  let trailStarted = false;
+  let handoffTimer = null;
+
+  const trailTrainSpeedPxPerMs = 0.48;
+
+  const animateTrailLine = (line, speedPxPerMs) =>
+    new Promise((resolve) => {
+      const text = line.querySelector(".about-trail-text");
+      const train = line.querySelector(".about-trail-train");
+
+      if (!text || !train) {
+        line.classList.add("is-done");
+        resolve();
+        return;
+      }
+
+      line.classList.add("is-revealing");
+      text.style.opacity = "1";
+
+      const textWidth = Math.max(text.scrollWidth, 1);
+      const lineWidth = Math.max(line.clientWidth, textWidth, 1);
+      const trainWidth = Math.max(train.offsetWidth, 1);
+      const startAnchorPx = -56;
+      const startX = -trainWidth + startAnchorPx;
+      const endX = lineWidth + trainWidth * 1.35;
+      const travelDistance = Math.max(1, endX - startX);
+      const revealDurationMs = 320;
+      const totalDurationMs = travelDistance / Math.max(speedPxPerMs, 0.01);
+      const startTime = performance.now();
+
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const revealProgress = Math.max(0, Math.min(1, elapsed / revealDurationMs));
+        const progress = Math.max(0, Math.min(1, elapsed / totalDurationMs));
+        const x = startX + travelDistance * progress;
+
+        // Reveal from right-to-left so the train nose appears first, then body.
+        train.style.clipPath = `inset(0 0 0 ${Math.max(0, (1 - revealProgress) * 100)}%)`;
+        train.style.left = `${x}px`;
+
+        const revealRatio = Math.max(0, Math.min(1, (x + trainWidth * 0.38) / textWidth));
+        text.style.clipPath = `inset(0 ${100 - revealRatio * 100}% 0 0)`;
+
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+          return;
+        }
+
+        line.classList.remove("is-revealing");
+        line.classList.add("is-done");
+        train.style.left = `${endX}px`;
+        train.style.clipPath = "inset(0 0 0 0)";
+        text.style.clipPath = "inset(0 0 0 0)";
+        window.requestAnimationFrame(() => {
+          train.style.opacity = "0";
+          resolve();
+        });
+      };
+
+      window.requestAnimationFrame(step);
+    });
+
+  const runTrailSequence = async () => {
+    if (trailStarted) {
+      return;
+    }
+
+    trailStarted = true;
+    if (handoffTimer) {
+      window.clearTimeout(handoffTimer);
+      handoffTimer = null;
+    }
+    markCompanyGone();
+
+    for (let i = 0; i < trailLines.length; i += 1) {
+      await animateTrailLine(trailLines[i], trailTrainSpeedPxPerMs);
+    }
+  };
+
+  const startAnimation = () => {
+    if (hasStarted || companyTrain.classList.contains("is-running") || companyTrain.classList.contains("is-gone")) {
+      return;
+    }
+
+    hasStarted = true;
+    companyTrain.classList.add("is-running");
+
+    // Start the line-trail handoff earlier so the first train phase
+    // feels snappier without changing its speed/acceleration profile.
+    handoffTimer = window.setTimeout(() => {
+      runTrailSequence();
+    }, 2450);
+  };
+
+  companyTrain.addEventListener("click", (event) => {
+    if (!companyTrain.classList.contains("is-gone")) {
+      event.preventDefault();
+      startAnimation();
+    }
+  });
+
+  companyTrain.addEventListener(
+    "keydown",
+    (event) => {
+      if ((event.key === "Enter" || event.key === " ") && !companyTrain.classList.contains("is-gone")) {
+        event.preventDefault();
+        startAnimation();
+      }
+    }
+  );
+
+  companyTrain.addEventListener("animationend", (event) => {
+    if (event.animationName === "company-train-exit") {
+      runTrailSequence();
+    }
+  });
+}
+
 function getChimeAudioContext() {
   if (!chimeAudioContext) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -441,6 +655,119 @@ function initClickChime() {
   });
 }
 
+function initContactLetterRoll() {
+  const contactWord = document.querySelector(".contact-word");
+  if (
+    !contactWord ||
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return;
+  }
+
+  const sourceText = (contactWord.textContent || "").trim();
+  if (!sourceText) {
+    return;
+  }
+
+  contactWord.setAttribute("aria-label", sourceText);
+  contactWord.textContent = "";
+
+  const letters = [];
+  const fragment = document.createDocumentFragment();
+
+  Array.from(sourceText).forEach((char) => {
+    const span = document.createElement("span");
+    span.className = "contact-letter";
+    span.textContent = char;
+    span.dataset.char = char;
+    fragment.appendChild(span);
+    letters.push(span);
+  });
+
+  contactWord.appendChild(fragment);
+
+  let pointerX = -9999;
+  let pointerY = -9999;
+  let pointerActive = false;
+  let letterCenters = [];
+  let rafId = null;
+  const radius = 140;
+
+  const updateCenters = () => {
+    letterCenters = letters.map((letter) => {
+      const rect = letter.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    });
+  };
+
+  const draw = () => {
+    if (!pointerActive) {
+      letters.forEach((letter) => letter.style.setProperty("--roll", "0"));
+      return;
+    }
+
+    letters.forEach((letter, index) => {
+      const center = letterCenters[index];
+      if (!center) {
+        letter.style.setProperty("--roll", "0");
+        return;
+      }
+
+      const dx = pointerX - center.x;
+      const dy = pointerY - center.y;
+      const distance = Math.hypot(dx, dy);
+      const intensity = Math.max(0, 1 - distance / radius);
+      letter.style.setProperty("--roll", intensity.toFixed(3));
+    });
+  };
+
+  const requestDraw = () => {
+    if (rafId) {
+      return;
+    }
+    rafId = window.requestAnimationFrame(() => {
+      rafId = null;
+      draw();
+    });
+  };
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      pointerActive = true;
+      requestDraw();
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("pointerleave", () => {
+    pointerActive = false;
+    requestDraw();
+  });
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      updateCenters();
+      requestDraw();
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("resize", () => {
+    updateCenters();
+    requestDraw();
+  });
+
+  updateCenters();
+}
+
 function initCursorOrb() {
   if (
     window.matchMedia("(pointer: coarse)").matches ||
@@ -458,12 +785,27 @@ function initCursorOrb() {
   let y = window.innerHeight / 2;
   let targetX = x;
   let targetY = y;
+  let pointerX = x;
+  let pointerY = y;
+  let pointerInside = false;
   let vx = 0;
   let vy = 0;
 
   const stiffness = 0.06;
   const damping = 0.82;
   const maxSpeed = 42;
+  const interactiveSelector = "a, button, [data-open-video='true']";
+
+  const updateOrbActiveState = () => {
+    if (!pointerInside) {
+      orb.classList.remove("is-active");
+      return;
+    }
+
+    const elementAtPointer = document.elementFromPoint(pointerX, pointerY);
+    const interactiveTarget = elementAtPointer?.closest(interactiveSelector);
+    orb.classList.toggle("is-active", Boolean(interactiveTarget));
+  };
 
   const tick = () => {
     const ax = (targetX - x) * stiffness;
@@ -490,15 +832,17 @@ function initCursorOrb() {
   window.requestAnimationFrame(tick);
 
   document.addEventListener("mousemove", (event) => {
+    pointerInside = true;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
     targetX = event.clientX;
     targetY = event.clientY;
     orb.classList.add("is-visible");
-
-    const interactiveTarget = event.target.closest("a, button, [data-open-video='true']");
-    orb.classList.toggle("is-active", Boolean(interactiveTarget));
+    updateOrbActiveState();
   });
 
   document.addEventListener("mouseleave", () => {
+    pointerInside = false;
     orb.classList.remove("is-visible", "is-active");
   });
 
@@ -506,9 +850,24 @@ function initCursorOrb() {
     orb.classList.add("is-active");
   });
 
-  document.addEventListener("mouseup", (event) => {
-    const interactiveTarget = event.target.closest("a, button, [data-open-video='true']");
-    orb.classList.toggle("is-active", Boolean(interactiveTarget));
+  document.addEventListener("mouseup", () => {
+    window.requestAnimationFrame(updateOrbActiveState);
+  });
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (pointerInside) {
+        updateOrbActiveState();
+      }
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("resize", () => {
+    if (pointerInside) {
+      updateOrbActiveState();
+    }
   });
 }
 
@@ -516,7 +875,10 @@ renderWorkItems();
 setFooterYear();
 initThemeToggle();
 initClickChime();
+initNavIntentState();
 startClock();
+initCompanyTrainOneShot();
+initContactLetterRoll();
 initCursorOrb();
 updateHeaderShadow();
 window.addEventListener("scroll", updateHeaderShadow, { passive: true });

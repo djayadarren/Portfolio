@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 140" fill="none">
+  <g stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M114 34h578c18 0 32 14 32 32v24c0 18-14 32-32 32H36c-10 0-16-11-12-20 11-25 39-49 90-68z"/>
+    <path d="M38 98h686"/>
+    <path d="M47 92c14-4 39-12 62-24 27-15 39-28 45-34"/>
+    <rect x="130" y="54" width="56" height="38" rx="8"/>
+    <rect x="206" y="52" width="98" height="42" rx="10"/>
+    <rect x="320" y="52" width="98" height="42" rx="10"/>
+    <rect x="434" y="52" width="98" height="42" rx="10"/>
+    <rect x="548" y="52" width="98" height="42" rx="10"/>
+    <rect x="654" y="50" width="44" height="46" rx="8"/>
+    <path d="M252 54v38"/>
+    <path d="M366 54v38"/>
+    <path d="M480 54v38"/>
+    <path d="M594 54v38"/>
+    <circle cx="122" cy="114" r="8"/>
+    <circle cx="146" cy="114" r="8"/>
+    <circle cx="170" cy="114" r="8"/>
+    <circle cx="364" cy="114" r="8"/>
+    <circle cx="388" cy="114" r="8"/>
+    <circle cx="412" cy="114" r="8"/>
+    <circle cx="606" cy="114" r="8"/>
+    <circle cx="630" cy="114" r="8"/>
+    <circle cx="654" cy="114" r="8"/>
+  </g>
+</svg>

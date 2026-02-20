@@ -131,7 +131,7 @@ a {
   margin: 0 auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line-dark);
-  overflow: hidden;
+  overflow: clip;
   background: linear-gradient(
     180deg,
     var(--panel-top) 0%,
@@ -143,8 +143,7 @@ a {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 30;
   display: flex;
   justify-content: space-between;
@@ -294,8 +293,8 @@ a {
 }
 
 .hero-text {
-  font-size: var(--copy-accent-size);
-  margin-top: 1rem;
+  font-size: clamp(0.85rem, 1.7vw, 1.14rem);
+  margin-top: 2rem;
   max-width: 44ch;
   color: color-mix(in oklab, var(--text-home) 90%, #001321 10%);
 }
@@ -328,9 +327,14 @@ a {
   transition: color var(--motion-slow) ease;
 }
 
+#about .section-title,
+#work .section-title {
+  font-size: clamp(2.4rem, 7.04vw, 6.24rem);
+}
+
 .about-layout {
   display: grid;
-  gap: 2.6rem;
+  gap: 1.6rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -341,23 +345,185 @@ a {
 
 .about-body {
   color: var(--muted-dark);
-  max-width: 48ch;
+  max-width: 66ch;
+  margin-left: -2.1rem;
   font-size: 1.03rem;
   transition: color var(--motion-slow) ease;
+}
+
+.about-company-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.about-trail {
+  display: grid;
+  gap: 0.34rem;
+  margin-top: 0.28rem;
+}
+
+.about-trail-line {
+  position: relative;
+  min-height: 1.45em;
+}
+
+.about-trail-text {
+  display: inline-block;
+  color: var(--muted-dark);
+  white-space: nowrap;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transition: opacity 180ms ease;
+}
+
+.about-trail-line.is-revealing .about-trail-text,
+.about-trail-line.is-done .about-trail-text {
+  opacity: 1;
+}
+
+  .about-trail-line.is-done .about-trail-text {
+    clip-path: inset(0 0 0 0);
+  }
+
+.about-trail-train {
+  position: absolute;
+  left: -9999px;
+  top: 50%;
+  width: 6.8em;
+  height: 1.38em;
+  background: url("assets/skytrain-side-colored-right.svg") center / contain no-repeat;
+  transform: translateY(-52%);
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.about-trail-line.is-revealing .about-trail-train {
+  opacity: 0.98;
+}
+
+.company-train {
+  --company-hover-nudge: 0.36em;
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  padding-right: 0.15em;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--text-dark) 70%, var(--line-dark) 30%);
+  overflow: visible;
+  transition: color 220ms ease, -webkit-text-stroke-color 220ms ease;
+}
+
+.company-train::before {
+  content: "";
+  position: absolute;
+  left: -0.22em;
+  top: 50%;
+  width: 6.8em;
+  height: 1.38em;
+  background: url("assets/skytrain-side-colored.svg") center / contain no-repeat;
+  opacity: 0.98;
+  transform: translateY(-52%) translateX(0) scaleX(-1);
+  z-index: 2;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.company-train:not(.is-running):not(.is-gone):hover::before,
+.company-train:not(.is-running):not(.is-gone):focus-visible::before {
+  transform: translateY(-52%) translateX(var(--company-hover-nudge)) scaleX(-1);
+}
+
+.company-train.is-running,
+.company-train.is-gone {
+  color: var(--text-dark);
+  -webkit-text-stroke-color: transparent;
+}
+
+.company-train.is-running::before {
+  animation: company-train-exit 3400ms linear forwards;
+}
+
+.company-train.is-gone::before {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 132vw)) scaleX(-1);
+  animation: none;
+}
+
+@keyframes company-train-exit {
+  0% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(var(--company-hover-nudge)) scaleX(-1);
+  }
+  10% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 1vw)) scaleX(-1);
+  }
+  20% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 4vw)) scaleX(-1);
+  }
+  30% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 9vw)) scaleX(-1);
+  }
+  40% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 16vw)) scaleX(-1);
+  }
+  50% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 26vw)) scaleX(-1);
+  }
+  60% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 40vw)) scaleX(-1);
+  }
+  70% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 58vw)) scaleX(-1);
+  }
+  80% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 80vw)) scaleX(-1);
+  }
+  90% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 105vw)) scaleX(-1);
+  }
+  100% {
+    opacity: 0.98;
+    transform: translateY(-52%) translateX(calc(var(--company-hover-nudge) + 132vw)) scaleX(-1);
+  }
 }
 
 .work-layout {
   display: grid;
   gap: 3rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+}
+
+.work-rail {
+  position: sticky;
+  top: 7.4rem;
+  align-self: start;
+  display: grid;
+  gap: 1.15rem;
+  z-index: 2;
+}
+
+body[data-section-intent="contact"] .work-rail {
+  position: static;
+  top: auto;
 }
 
 .work-intro {
   font-size: var(--copy-accent-size);
-  max-width: 20ch;
-  position: sticky;
-  top: 7.4rem;
-  align-self: start;
+  max-width: 22ch;
 }
 
 .work-list {
@@ -477,12 +643,42 @@ a {
 }
 
 .contact-word {
-  font-size: clamp(3.15rem, 10.5vw, 9.1rem);
+  font-size: clamp(3.15rem, 10.5vw, 6.1rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
   text-transform: lowercase;
   color: transparent;
   -webkit-text-stroke: 1px color-mix(in oklab, var(--text-dark) 65%, var(--accent) 35%);
+  display: flex;
+  gap: 0.015em;
+  align-items: flex-end;
+  perspective: 760px;
+  transform-style: preserve-3d;
+}
+
+.contact-letter {
+  --roll: 0;
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--text-dark) 65%, var(--accent) 35%);
+  transform: translateY(calc(var(--roll) * -0.28em)) rotateX(calc(var(--roll) * 58deg));
+  transform-origin: 50% 100%;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.contact-letter::before {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--text-dark) 65%, var(--accent) 35%);
+  opacity: calc(var(--roll) * 0.82);
+  transform: translateY(calc(var(--roll) * -0.92em));
+  transition: opacity 220ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
 }
 
 .copyright {
@@ -631,10 +827,15 @@ button:focus-visible {
     grid-column: auto;
   }
 
-  .work-intro {
-    position: static;
-    top: auto;
+  .about-body {
+    margin-left: 0;
+    max-width: 100%;
   }
+
+  .work-intro {
+    max-width: 100%;
+  }
+
 }
 
 @media (max-width: 700px) {
@@ -662,6 +863,42 @@ button:focus-visible {
   .cursor-orb {
     display: none;
   }
+
+  .contact-letter {
+    transform: none !important;
+  }
+
+  .contact-letter::before {
+    opacity: 0 !important;
+    transform: none !important;
+  }
+
+  .company-train::before {
+    display: none !important;
+  }
+
+  .company-train {
+    color: var(--text-dark);
+    -webkit-text-stroke-color: transparent;
+  }
+
+  .about-company-line {
+    white-space: normal;
+  }
+
+  .about-trail {
+    margin-top: 0.34rem;
+  }
+
+  .about-trail-text {
+    opacity: 1 !important;
+    clip-path: inset(0 0 0 0) !important;
+    white-space: normal !important;
+  }
+
+  .about-trail-train {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -683,5 +920,24 @@ button:focus-visible {
 
   .cursor-orb {
     display: none;
+  }
+
+  .company-train::before {
+    display: none !important;
+  }
+
+  .company-train {
+    color: var(--text-dark);
+    -webkit-text-stroke-color: transparent;
+  }
+
+  .about-trail-text {
+    opacity: 1 !important;
+    clip-path: inset(0 0 0 0) !important;
+    white-space: normal !important;
+  }
+
+  .about-trail-train {
+    display: none !important;
   }
 }
