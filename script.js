@@ -479,6 +479,95 @@ function initModal() {
   });
 }
 
+function initMobileWelcome() {
+  const popup = document.getElementById("mobile-welcome");
+  const dismissButton = document.getElementById("mobile-welcome-dismiss");
+  if (!popup || !dismissButton) {
+    return;
+  }
+
+  const closeTargets = Array.from(popup.querySelectorAll("[data-mobile-welcome-close='true']"));
+  const storageKey = "mobileWelcomeDismissedV1";
+  const mobileWidthQuery = window.matchMedia("(max-width: 820px)");
+  const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+  const portraitQuery = window.matchMedia("(orientation: portrait)");
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const isDismissed = () => {
+    try {
+      return localStorage.getItem(storageKey) === "1";
+    } catch {
+      return false;
+    }
+  };
+
+  const markDismissed = () => {
+    try {
+      localStorage.setItem(storageKey, "1");
+    } catch {
+      // Ignore storage failures (private mode / blocked storage).
+    }
+  };
+
+  const shouldShowOnDevice = () => {
+    const mobileLike = mobileWidthQuery.matches || coarsePointerQuery.matches;
+    return mobileLike && portraitQuery.matches;
+  };
+
+  let isOpen = false;
+
+  const setOpenState = (open) => {
+    isOpen = open;
+    popup.classList.toggle("is-open", open);
+    popup.setAttribute("aria-hidden", open ? "false" : "true");
+    body.classList.toggle("mobile-welcome-open", open);
+    if (open) {
+      dismissButton.focus({ preventScroll: true });
+    }
+  };
+
+  const closePopup = ({ remember = true } = {}) => {
+    if (remember) {
+      markDismissed();
+    }
+    setOpenState(false);
+  };
+
+  closeTargets.forEach((target) => {
+    target.addEventListener("click", () => closePopup({ remember: true }));
+  });
+
+  dismissButton.addEventListener("click", () => closePopup({ remember: true }));
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isOpen) {
+      closePopup({ remember: true });
+    }
+  });
+
+  const closeWhenNotMobile = () => {
+    if (!shouldShowOnDevice() && isOpen) {
+      closePopup({ remember: false });
+    }
+  };
+
+  mobileWidthQuery.addEventListener("change", closeWhenNotMobile);
+  coarsePointerQuery.addEventListener("change", closeWhenNotMobile);
+  portraitQuery.addEventListener("change", closeWhenNotMobile);
+
+  if (isDismissed() || !shouldShowOnDevice()) {
+    return;
+  }
+
+  const openDelayMs = reducedMotionQuery.matches ? 40 : 620;
+  window.setTimeout(() => {
+    if (isDismissed() || !shouldShowOnDevice()) {
+      return;
+    }
+    setOpenState(true);
+  }, openDelayMs);
+}
+
 function initThemeToggle() {
   if (themeToggle) {
     themeToggle.addEventListener("click", rotateThemePreference);
@@ -535,6 +624,8 @@ function initCompanyTrainOneShot() {
   const TRAIN_START_ANCHOR_PX = -56;
   const TRAIN_EXIT_EXTRA_WIDTH_RATIO = 1.35;
   const SECOND_PASS_START_PROGRESS = 0.3;
+  const RIGHT_CAVE_MOUTH_OFFSET_PX = 0;
+  const RIGHT_PASS_START_OFFSET_PX = 0;
   // Back (left) inset for the right-facing train art due to viewBox side padding.
   const TRAIN_BACK_INSET_RATIO = 36 / 760;
   // Small lead to remove the visible gap between train back and text trail.
@@ -675,14 +766,18 @@ function initCompanyTrainOneShot() {
       train.style.width = `${dynamicTrainWidth}px`;
 
       const textWidth = Math.max(text.getBoundingClientRect().width, 1);
-      const lineWidth = Math.max(line.clientWidth, textWidth, 1);
+      const lineWidth = Math.max(line.clientWidth || textWidth, 1);
       const trainWidth = Math.max(train.offsetWidth, 1);
-      const startX = isReversePass ? lineWidth - TRAIN_START_ANCHOR_PX : -trainWidth + TRAIN_START_ANCHOR_PX;
+      const lineRect = line.getBoundingClientRect();
+      const shellRect = line.closest(".site-shell")?.getBoundingClientRect() || null;
+      const rightBoundaryX = shellRect ? shellRect.right - lineRect.left : lineWidth;
+      const rightCaveMouthX = rightBoundaryX + RIGHT_CAVE_MOUTH_OFFSET_PX;
+      const startX = isReversePass ? rightCaveMouthX + RIGHT_PASS_START_OFFSET_PX : -trainWidth + TRAIN_START_ANCHOR_PX;
       const endX = isReversePass ? -trainWidth * TRAIN_EXIT_EXTRA_WIDTH_RATIO : lineWidth + trainWidth * TRAIN_EXIT_EXTRA_WIDTH_RATIO;
       const travelDistance = Math.max(1, Math.abs(endX - startX));
       const totalDurationMs = travelDistance / Math.max(speedPxPerMs, 0.01);
       const startTime = performance.now();
-      const caveMouthX = isReversePass ? lineWidth : 0;
+      const caveMouthX = isReversePass ? rightCaveMouthX : 0;
       const visibleTrainHeightPx = dynamicTrainHeight * TRAIN_VISIBLE_HEIGHT_RATIO;
       const tailCurvePct = ((visibleTrainHeightPx * 0.48) / Math.max(lineWidth, 1)) * 100;
       let finished = false;
@@ -2087,3 +2182,4 @@ window.addEventListener("scroll", updateHeaderShadow, { passive: true });
 initNavObserver();
 initReveal();
 initModal();
+initMobileWelcome();

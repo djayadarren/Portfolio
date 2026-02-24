@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Monoton&family=Rubik+Glitch&family=Space+Grotesk:wght@400;500;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260220-28" />
+  <link rel="stylesheet" href="style.css?v=20260220-31" />
 </head>
 <body data-theme="midnight">
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -137,6 +137,27 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260220-62" defer></script>
+  <div
+    id="mobile-welcome"
+    class="mobile-welcome"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mobile-welcome-title"
+  >
+    <div class="mobile-welcome__backdrop" data-mobile-welcome-close="true"></div>
+    <section class="mobile-welcome__panel" role="document">
+      <p class="mobile-welcome__eyebrow">Quick Note</p>
+      <h3 id="mobile-welcome-title" class="mobile-welcome__title">Welcome to my portfolio</h3>
+      <p class="mobile-welcome__copy">
+        This site is fully supported on mobile. For the full motion and layout experience, desktop gives the best view.
+      </p>
+      <div class="mobile-welcome__actions">
+        <button id="mobile-welcome-dismiss" class="mobile-welcome__button" type="button">Continue on mobile</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js?v=20260220-68" defer></script>
 </body>
 </html>
